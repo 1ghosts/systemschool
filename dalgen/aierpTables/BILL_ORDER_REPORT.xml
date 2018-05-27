@@ -1,0 +1,115 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="BILL_ORDER_REPORT" physicalName="BILL_ORDER_REPORT" remark="BILL_ORDER_REPORT">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:BILL_ORDER_REPORT">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO BILL_ORDER_REPORT(
+            
+            TIME
+            ,SELL_COUNT
+            ,STORE_CODE
+            ,UNIT_PRICE
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,MERCHANT_ID
+            ,SELL_AMOUNT
+            ,INCOME_AMOUNT
+            ,SELL_COUNT_YEAR
+            ,SELL_AMOUNT_YEAR
+            ,SELL_COUNT_MONTH
+            ,SELL_AMOUNT_MONTH
+            ,WALLET_PAY_AMOUNT
+            ,SELL_AMOUNT_LAST_MONTH
+        )VALUES(
+            
+            #{time,jdbcType=DATE}
+            ,#{sellCount,jdbcType=BIGINT}
+            ,#{storeCode,jdbcType=VARCHAR}
+            ,#{unitPrice,jdbcType=DECIMAL}
+            ,now()
+            ,now()
+            ,#{merchantId,jdbcType=INTEGER}
+            ,#{sellAmount,jdbcType=DECIMAL}
+            ,#{incomeAmount,jdbcType=DECIMAL}
+            ,#{sellCountYear,jdbcType=BIGINT}
+            ,#{sellAmountYear,jdbcType=DECIMAL}
+            ,#{sellCountMonth,jdbcType=BIGINT}
+            ,#{sellAmountMonth,jdbcType=DECIMAL}
+            ,#{walletPayAmount,jdbcType=DECIMAL}
+            ,#{sellAmountLastMonth,jdbcType=DECIMAL}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:BILL_ORDER_REPORT">
+            UPDATE BILL_ORDER_REPORT
+            SET
+                    TIME            = #{time,jdbcType=DATE}
+                    ,SELL_COUNT      = #{sellCount,jdbcType=BIGINT}
+                    ,STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+                    ,UNIT_PRICE      = #{unitPrice,jdbcType=DECIMAL}
+                    ,GMT_UPDATED     = now()
+                    ,MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+                    ,SELL_AMOUNT     = #{sellAmount,jdbcType=DECIMAL}
+                    ,INCOME_AMOUNT   = #{incomeAmount,jdbcType=DECIMAL}
+                    ,SELL_COUNT_YEAR = #{sellCountYear,jdbcType=BIGINT}
+                    ,SELL_AMOUNT_YEAR = #{sellAmountYear,jdbcType=DECIMAL}
+                    ,SELL_COUNT_MONTH = #{sellCountMonth,jdbcType=BIGINT}
+                    ,SELL_AMOUNT_MONTH = #{sellAmountMonth,jdbcType=DECIMAL}
+                    ,WALLET_PAY_AMOUNT = #{walletPayAmount,jdbcType=DECIMAL}
+                    ,SELL_AMOUNT_LAST_MONTH = #{sellAmountLastMonth,jdbcType=DECIMAL}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:BILL_ORDER_REPORT">
+            DELETE FROM BILL_ORDER_REPORT
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:BILL_ORDER_REPORT">
+            SELECT * FROM BILL_ORDER_REPORT
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+
+        <operation name="updateByStoreCodeAndTime" paramtype="object" remark="根据门店编码和日期更新">
+            UPDATE BILL_ORDER_REPORT
+            SET
+            TIME            = #{time,jdbcType=DATE}
+            ,SELL_COUNT      = #{sellCount,jdbcType=BIGINT}
+            ,STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+            ,UNIT_PRICE      = #{unitPrice,jdbcType=DECIMAL}
+            ,GMT_UPDATED     = now()
+            ,MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+            ,SELL_AMOUNT     = #{sellAmount,jdbcType=DECIMAL}
+            ,INCOME_AMOUNT   = #{incomeAmount,jdbcType=DECIMAL}
+            ,SELL_COUNT_YEAR = #{sellCountYear,jdbcType=BIGINT}
+            ,SELL_AMOUNT_YEAR = #{sellAmountYear,jdbcType=DECIMAL}
+            ,SELL_COUNT_MONTH = #{sellCountMonth,jdbcType=BIGINT}
+            ,SELL_AMOUNT_MONTH = #{sellAmountMonth,jdbcType=DECIMAL}
+            ,WALLET_PAY_AMOUNT = #{walletPayAmount,jdbcType=DECIMAL}
+            ,SELL_AMOUNT_LAST_MONTH = #{sellAmountLastMonth,jdbcType=DECIMAL}
+            WHERE
+            TIME            = #{time,jdbcType=DATE}
+            AND
+            STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+        </operation>
+
+
+        <operation name="getStatisticsInfo" multiplicity="many" remark="根据时间范围获取数据:BILL_ORDER_REPORT">
+            SELECT * FROM BILL_ORDER_REPORT
+            WHERE
+            STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+            AND
+            TIME      BETWEEN #{beginDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}
+        </operation>
+
+
+
+</table>

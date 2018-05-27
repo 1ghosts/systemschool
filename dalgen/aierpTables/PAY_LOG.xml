@@ -1,0 +1,55 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="PAY_LOG" physicalName="PAY_LOG" remark="PAY_LOG">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:PAY_LOG">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO PAY_LOG(
+            
+            AMOUNT
+            ,PAY_TYPE
+            ,EXT_PAYID
+            ,ORDER_CODE
+            ,ORDER_TYPE
+            ,GMT_CREATED
+            ,GMT_UPDATED
+        )VALUES(
+            
+            #{amount,jdbcType=BIGINT}
+            ,#{payType,jdbcType=VARCHAR}
+            ,#{extPayid,jdbcType=VARCHAR}
+            ,#{orderCode,jdbcType=VARCHAR}
+            ,#{orderType,jdbcType=TINYINT}
+            ,now()
+            ,now()
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:PAY_LOG">
+            UPDATE PAY_LOG
+            SET
+                    AMOUNT          = #{amount,jdbcType=BIGINT}
+                    ,PAY_TYPE        = #{payType,jdbcType=VARCHAR}
+                    ,EXT_PAYID       = #{extPayid,jdbcType=VARCHAR}
+                    ,ORDER_CODE      = #{orderCode,jdbcType=VARCHAR}
+                    ,ORDER_TYPE      = #{orderType,jdbcType=TINYINT}
+                    ,GMT_UPDATED     = now()
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:PAY_LOG">
+            DELETE FROM PAY_LOG
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:PAY_LOG">
+            SELECT * FROM PAY_LOG
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+</table>

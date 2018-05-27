@@ -1,0 +1,147 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="RECHARGE_ORDER" physicalName="RECHARGE_ORDER" remark="RECHARGE_ORDER">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:RECHARGE_ORDER">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO RECHARGE_ORDER(
+            
+            CODE
+            ,TYPE
+            ,AMOUNT
+            ,OUT_CODE
+            ,PAY_LOGID
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,SUBMIT_TIME
+            ,ORDER_STATUS
+            ,CUSTOMER_CODE
+        )VALUES(
+            
+            #{code,jdbcType=VARCHAR}
+            ,#{type,jdbcType=VARCHAR}
+            ,#{amount,jdbcType=INTEGER}
+            ,#{outCode,jdbcType=VARCHAR}
+            ,#{payLogid,jdbcType=INTEGER}
+            ,now()
+            ,now()
+            ,#{submitTime,jdbcType=TIMESTAMP}
+            ,#{orderStatus,jdbcType=TINYINT}
+            ,#{customerCode,jdbcType=VARCHAR}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:RECHARGE_ORDER">
+            UPDATE RECHARGE_ORDER
+            SET
+                    CODE            = #{code,jdbcType=VARCHAR}
+                    ,TYPE            = #{type,jdbcType=VARCHAR}
+                    ,AMOUNT          = #{amount,jdbcType=INTEGER}
+                    ,OUT_CODE        = #{outCode,jdbcType=VARCHAR}
+                    ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+                    ,GMT_UPDATED     = now()
+                    ,SUBMIT_TIME     = #{submitTime,jdbcType=TIMESTAMP}
+                    ,ORDER_STATUS    = #{orderStatus,jdbcType=TINYINT}
+                    ,CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:RECHARGE_ORDER">
+            DELETE FROM RECHARGE_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:RECHARGE_ORDER">
+            SELECT * FROM RECHARGE_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+    <operation name="getByCustomerCode" multiplicity="many" remark="根据用户编号获取数据:RECHARGE_ORDER">
+        SELECT * FROM RECHARGE_ORDER
+        WHERE
+        CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getByCode" multiplicity="one" remark="根据订单号查询充值订单:ORDER">
+        SELECT * FROM RECHARGE_ORDER
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getByOutCode" multiplicity="one" remark="根据外部订单号查询充值订单:ORDER">
+        SELECT * FROM RECHARGE_ORDER
+        WHERE
+        OUT_CODE            = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderCanceled" remark="根据订单号撤销充值订单:ORDER">
+        UPDATE RECHARGE_ORDER
+        SET
+        ORDER_STATUS          = 0
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderPayed" remark="订单号充值订单已支付:ORDER">
+        UPDATE RECHARGE_ORDER
+        SET
+        TYPE        = #{type,jdbcType=VARCHAR}
+        ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+        ,ORDER_STATUS          = 2
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderPayedByOutCode" remark="通过外部订单号充值订单已支付:ORDER">
+        UPDATE RECHARGE_ORDER
+        SET
+        TYPE        = #{type,jdbcType=VARCHAR}
+        ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+        ,ORDER_STATUS          = 2
+        ,GMT_UPDATED     = now()
+        WHERE
+        OUT_CODE            = #{outcode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateCancelOrderByOutCode" remark="根据outCode订单号撤销充值订单:ORDER">
+        UPDATE RECHARGE_ORDER
+        SET
+        ORDER_STATUS          = 0
+        ,GMT_UPDATED     = now()
+        WHERE
+        OUT_CODE            = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getPagingByCustomerCode" multiplicity="paging" paging="RechargeOrder" paramtype="primitive" remark="分页查询顾客的订单:ORDER">
+        SELECT * FROM RECHARGE_ORDER
+        WHERE
+        ORDER_STATUS = 2
+        AND INVOICE_STATUS = 0
+        <if test="customerCode != null">
+            AND CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+        </if>
+        <if test="invoiceStatus != null">
+            AND INVOICE_STATUS   = #{invoiceStatus,jdbcType=TINYINT}
+        </if>
+        ORDER BY GMT_UPDATED DESC
+    </operation>
+
+    <operation name="updateInvoiceStatus" remark="开发票:ORDER">
+        UPDATE RECHARGE_ORDER
+        SET
+        INVOICE_STATUS          = 1
+        ,GMT_UPDATED     = now()
+        WHERE
+        OUT_CODE IN
+        <foreach collection="outCodes" item="outCode" index="index" open="(" close=")" separator=",">
+            #{outCode,jdbcType=VARCHAR}
+        </foreach>
+    </operation>
+</table>

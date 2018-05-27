@@ -1,0 +1,63 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="USER_CONTRACT" physicalName="USER_CONTRACT" remark="USER_CONTRACT">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:USER_CONTRACT">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO USER_CONTRACT(
+            
+            APP_ID
+            ,OPEN_ID
+            ,USER_ID
+            ,CONTRACT_ID
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,CONTRACT_CODE
+        )VALUES(
+            
+            #{appId,jdbcType=VARCHAR}
+            ,#{openId,jdbcType=VARCHAR}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{contractId,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{contractCode,jdbcType=VARCHAR}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:USER_CONTRACT">
+            UPDATE USER_CONTRACT
+            SET     OPEN_ID         = #{openId,jdbcType=VARCHAR}
+                    ,CONTRACT_ID     = #{contractId,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+            WHERE
+            CONTRACT_CODE              = #{contractCode,jdbcType=VARCHAR}
+        </operation>
+
+    <operation name="deleteByContractId" multiplicity="one" remark="根据contractId删除数据:USER_CONTRACT">
+        DELETE FROM USER_CONTRACT
+        WHERE
+        CONTRACT_ID = #{contract_id,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getByUserId" multiplicity="one" remark="根据userId获取数据:USER_CONTRACT">
+        SELECT * FROM USER_CONTRACT
+        WHERE
+        USER_ID = #{user_id,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getContractIdByUserId" multiplicity="one" resulttype="java.lang.String" remark="根据userId获取数据:USER_CONTRACT">
+        SELECT CONTRACT_ID FROM USER_CONTRACT
+        WHERE
+        USER_ID = #{user_id,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getByContractCode" multiplicity="one" remark="根据id获取数据:USER_CONTRACT">
+        SELECT * FROM USER_CONTRACT
+        WHERE
+        CONTRACT_CODE = #{contract_code,jdbcType=VARCHAR}
+    </operation>
+</table>

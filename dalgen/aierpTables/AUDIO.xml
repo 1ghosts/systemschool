@@ -1,0 +1,84 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="AUDIO" physicalName="AUDIO" remark="AUDIO">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:AUDIO">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO AUDIO(
+            
+            CODE
+            ,TYPE
+            ,STATUS
+            ,AUDIO_TEXT
+            ,GMT_CREATED
+            ,GMT_UPDATED
+        )VALUES(
+            
+            #{code,jdbcType=TINYINT}
+            ,#{type,jdbcType=TINYINT}
+            ,#{status,jdbcType=TINYINT}
+            ,#{audioText,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:AUDIO">
+            UPDATE AUDIO
+            SET
+                    CODE            = #{code,jdbcType=TINYINT}
+                    ,TYPE            = #{type,jdbcType=TINYINT}
+                    ,STATUS          = #{status,jdbcType=TINYINT}
+                    ,AUDIO_TEXT      = #{audioText,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:AUDIO">
+            DELETE FROM AUDIO
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:AUDIO">
+            SELECT * FROM AUDIO
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+    <operation name="getByCode" multiplicity="one" remark="根据code获取数据:AUDIO">
+        SELECT * FROM AUDIO
+        WHERE
+        CODE            = #{code,jdbcType=INTEGER}
+    </operation>
+    <operation name="deleteByCode" multiplicity="one" remark="根据code删除数据:AUDIO">
+        DELETE FROM AUDIO
+        WHERE
+        CODE            = #{code,jdbcType=INTEGER}
+    </operation>
+    <operation name="deleteAudioByCode" remark="根据code撤销音频:AUDIO">
+        UPDATE AUDIO
+        SET
+        STATUS          = 0
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=INTEGER}
+    </operation>
+
+    <operation name="updateAudioTextByCode" remark="根据code撤销音频:AUDIO">
+        UPDATE AUDIO
+        SET
+        AUDIO_TEXT      = #{audioText,jdbcType=VARCHAR}
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=INTEGER}
+    </operation>
+
+    <operation name="getAudioTextByType" multiplicity="many" remark="获取全部静态的语音文案">
+        SELECT * FROM AUDIO where TYPE = #{type,jdbcType=TINYINT}
+    </operation>
+</table>

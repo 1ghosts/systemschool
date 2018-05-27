@@ -1,0 +1,59 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="USER_VERIFICATION" physicalName="USER_VERIFICATION" remark="USER_VERIFICATION">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:USER_VERIFICATION">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO USER_VERIFICATION(
+            
+            FACE_ID
+            ,STATUS
+            ,USER_ID
+            ,STORE_CODE
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,MERCHANT_ID
+        )VALUES(
+            
+            #{faceId,jdbcType=VARCHAR}
+            ,#{status,jdbcType=INTEGER}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{storeCode,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{merchantId,jdbcType=INTEGER}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:USER_VERIFICATION">
+            UPDATE USER_VERIFICATION
+            SET
+                    FACE_ID         = #{faceId,jdbcType=VARCHAR}
+                    ,STATUS          = #{status,jdbcType=INTEGER}
+                    ,USER_ID         = #{userId,jdbcType=VARCHAR}
+                    ,STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+                    ,MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:USER_VERIFICATION">
+            DELETE FROM USER_VERIFICATION
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:USER_VERIFICATION">
+            SELECT * FROM USER_VERIFICATION
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+    <operation name="deleteAll" remark="根据主键获取数据:USER_VERIFICATION">
+        UPDATE USER_VERIFICATION SET STATUS          = 0
+    </operation>
+</table>

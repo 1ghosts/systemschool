@@ -1,0 +1,102 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="USER_FACE" physicalName="USER_FACE" remark="USER_FACE">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:USER_FACE">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO USER_FACE(
+            
+            FACE_ID
+            ,USER_ID
+            ,FACE_IMG_URL
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,MERCHANT_ID
+            ,WALLET_CODE
+        )VALUES(
+            
+            #{faceId,jdbcType=VARCHAR}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{faceImgUrl,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{merchantId,jdbcType=INTEGER}
+            ,#{walletCode,jdbcType=VARCHAR}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:USER_FACE">
+            UPDATE USER_FACE
+            SET
+                    FACE_ID         = #{faceId,jdbcType=VARCHAR}
+                    ,USER_ID         = #{userId,jdbcType=VARCHAR}
+                    ,FACE_IMG_URL    = #{faceImgUrl,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+                    ,MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+                    ,WALLET_CODE     = #{walletCode,jdbcType=VARCHAR}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:USER_FACE">
+            DELETE FROM USER_FACE
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:USER_FACE">
+            SELECT * FROM USER_FACE
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+    <operation name="updateByUserId" paramtype="object" remark="根据userId更新表:USER_FACE">
+        UPDATE USER_FACE
+        SET
+        FACE_ID         = #{faceId,jdbcType=VARCHAR}
+        ,GMT_UPDATED      = now()
+        ,FACE_IMG_URL    = #{faceImgUrl,jdbcType=VARCHAR}
+        WHERE
+        USER_ID              = #{userId,jdbcType=VARCHAR}
+        AND  MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+    </operation>
+
+
+    <operation name="getByUserId" multiplicity="one" remark="根据userId获取数据:USER_FACE">
+        SELECT * FROM USER_FACE
+        WHERE
+        USER_ID              = #{userId,jdbcType=VARCHAR}
+        AND MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+    </operation>
+
+    <operation name="updateWallet" paramtype="object" remark="根据userId更新用户钱包code表:USER_FACE">
+        UPDATE USER_FACE
+        SET
+        WALLET_CODE     = #{walletCode,jdbcType=VARCHAR}
+        ,GMT_UPDATED      = now()
+        WHERE
+        USER_ID              = #{userId,jdbcType=VARCHAR}
+        AND MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+    </operation>
+
+    <operation name="getByFaceIdAndMerchantId" multiplicity="one" remark="根据faceId和MerchantId获取数据:USER_FACE">
+        SELECT * FROM USER_FACE
+        WHERE
+        FACE_ID         = #{faceId,jdbcType=VARCHAR}
+        AND MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+    </operation>
+
+    <operation name="getByFaceId" multiplicity="one" remark="根据faceId获取数据:USER_FACE">
+        SELECT * FROM USER_FACE
+        WHERE
+        FACE_ID         = #{faceId,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getAllUserFace" multiplicity="many" remark="获取所有用户的人脸数据:USER_FACE">
+        SELECT * FROM USER_FACE
+    </operation>
+
+</table>

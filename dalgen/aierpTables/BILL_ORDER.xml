@@ -1,0 +1,172 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="BILL_ORDER" physicalName="BILL_ORDER" remark="BILL_ORDER">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:BILL_ORDER">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO BILL_ORDER(
+            
+            CODE
+            ,COUNT
+            ,GOODS
+            ,AMOUNT
+            ,STATUS
+            ,OUT_CODE
+            ,PAY_TYPE
+            ,PAY_LOGID
+            ,STORE_CODE
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,MERCHANT_ID
+            ,MACHINE_CODE
+            ,SUBMMIT_TIME
+            ,CUSTOMER_CODE
+            ,INVOICE_STATUS
+        )VALUES(
+            
+            #{code,jdbcType=VARCHAR}
+            ,#{count,jdbcType=INTEGER}
+            ,#{goods,jdbcType=LONGVARCHAR}
+            ,#{amount,jdbcType=BIGINT}
+            ,#{status,jdbcType=TINYINT}
+            ,#{outCode,jdbcType=VARCHAR}
+            ,#{payType,jdbcType=VARCHAR}
+            ,#{payLogid,jdbcType=INTEGER}
+            ,#{storeCode,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{merchantId,jdbcType=INTEGER}
+            ,#{machineCode,jdbcType=VARCHAR}
+            ,#{submmitTime,jdbcType=TIMESTAMP}
+            ,#{customerCode,jdbcType=VARCHAR}
+            ,#{invoiceStatus,jdbcType=TINYINT}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:BILL_ORDER">
+            UPDATE BILL_ORDER
+            SET
+                    CODE            = #{code,jdbcType=VARCHAR}
+                    ,COUNT           = #{count,jdbcType=INTEGER}
+                    ,GOODS           = #{goods,jdbcType=LONGVARCHAR}
+                    ,AMOUNT          = #{amount,jdbcType=BIGINT}
+                    ,STATUS          = #{status,jdbcType=TINYINT}
+                    ,OUT_CODE        = #{outCode,jdbcType=VARCHAR}
+                    ,PAY_TYPE        = #{payType,jdbcType=VARCHAR}
+                    ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+                    ,STORE_CODE      = #{storeCode,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+                    ,MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+                    ,MACHINE_CODE    = #{machineCode,jdbcType=VARCHAR}
+                    ,SUBMMIT_TIME    = #{submmitTime,jdbcType=TIMESTAMP}
+                    ,CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+                    ,INVOICE_STATUS  = #{invoiceStatus,jdbcType=TINYINT}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:BILL_ORDER">
+            DELETE FROM BILL_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:BILL_ORDER">
+            SELECT * FROM BILL_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+    <operation name="getByCustomerCode" multiplicity="many" remark="查询顾客的订单:ORDER">
+        SELECT * FROM BILL_ORDER
+        WHERE
+        CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+
+        AND
+        MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+        ORDER BY GMT_UPDATED DESC
+    </operation>
+
+    <operation name="getByCode" multiplicity="one" remark="根据订单号查询订单:ORDER">
+        SELECT * FROM BILL_ORDER
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getByOutCode" multiplicity="one" remark="根据外部订单号查询订单:ORDER">
+        SELECT * FROM BILL_ORDER
+        WHERE
+        OUT_CODE            = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderCanceled" remark="根据订单号撤销订单:ORDER">
+        UPDATE BILL_ORDER
+        SET
+        STATUS          = 0
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderPayed" remark="根据订单号支付订单:ORDER">
+        UPDATE BILL_ORDER
+        SET
+        PAY_TYPE        = #{payType,jdbcType=TINYINT}
+        ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+        ,CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+        ,STATUS          = 2
+        ,GMT_UPDATED     = now()
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="getPagingByCustomerCode" multiplicity="paging" paging="BillOrder" paramtype="primitive" remark="分页查询顾客的订单:ORDER">
+        SELECT * FROM BILL_ORDER
+        WHERE
+        `STATUS` = 2
+        AND
+        MERCHANT_ID     = #{merchantId,jdbcType=INTEGER}
+        <if test="customerCode != null">
+            AND CUSTOMER_CODE   = #{customerCode,jdbcType=VARCHAR}
+        </if>
+        <if test="invoiceStatus != null">
+            AND INVOICE_STATUS   = #{invoiceStatus,jdbcType=TINYINT}
+        </if>
+        ORDER BY GMT_UPDATED DESC
+    </operation>
+
+    <operation name="updateOrderPayedByOutCode" remark="根据外部订单号撤销订单:ORDER">
+        UPDATE BILL_ORDER
+        SET
+        PAY_TYPE        = #{payType,jdbcType=TINYINT}
+        ,PAY_LOGID       = #{payLogid,jdbcType=INTEGER}
+        ,STATUS          = 2
+        ,GMT_UPDATED     = now()
+        WHERE
+        OUT_CODE            = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateOrderCanceledByOutCode" remark="根据outCode订单号撤销订单:ORDER">
+        UPDATE BILL_ORDER
+        SET
+        STATUS          = 0
+        ,GMT_UPDATED     = now()
+        WHERE
+        OUT_CODE            = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+    <operation name="updateInvoiceStatus" remark="开发票:ORDER">
+        UPDATE BILL_ORDER
+        SET
+        INVOICE_STATUS = 1
+        ,GMT_UPDATED  = now()
+        WHERE
+        OUT_CODE IN
+        <foreach collection="outCodes" item="outCode" index="index" open="(" close=")" separator=",">
+            #{outCode,jdbcType=VARCHAR}
+        </foreach>
+    </operation>
+</table>

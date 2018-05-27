@@ -1,0 +1,126 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="REFUND_ORDER" physicalName="REFUND_ORDER" remark="REFUND_ORDER">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:REFUND_ORDER">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO REFUND_ORDER(
+            
+            CODE
+            ,TYPE
+            ,AMOUNT
+            ,REMARK
+            ,STATUS
+            ,OPERATOR
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,SUBMIT_TIME
+            ,SUCCESS_TIME
+            ,BILL_ORDER_OUT_CODE
+            ,BILL_ORDER_PAY_TYPE
+        )VALUES(
+            
+            #{code,jdbcType=VARCHAR}
+            ,#{type,jdbcType=INTEGER}
+            ,#{amount,jdbcType=BIGINT}
+            ,#{remark,jdbcType=VARCHAR}
+            ,#{status,jdbcType=INTEGER}
+            ,#{operator,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{submitTime,jdbcType=TIMESTAMP}
+            ,#{successTime,jdbcType=TIMESTAMP}
+            ,#{billOrderOutCode,jdbcType=VARCHAR}
+            ,#{billOrderPayType,jdbcType=VARCHAR}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:REFUND_ORDER">
+            UPDATE REFUND_ORDER
+            SET
+                    CODE            = #{code,jdbcType=VARCHAR}
+                    ,TYPE            = #{type,jdbcType=INTEGER}
+                    ,AMOUNT          = #{amount,jdbcType=BIGINT}
+                    ,REMARK          = #{remark,jdbcType=VARCHAR}
+                    ,STATUS          = #{status,jdbcType=INTEGER}
+                    ,OPERATOR        = #{operator,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+                    ,SUBMIT_TIME     = #{submitTime,jdbcType=TIMESTAMP}
+                    ,SUCCESS_TIME    = #{successTime,jdbcType=TIMESTAMP}
+                    ,BILL_ORDER_OUT_CODE = #{billOrderOutCode,jdbcType=VARCHAR}
+                    ,BILL_ORDER_PAY_TYPE = #{billOrderPayType,jdbcType=VARCHAR}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:REFUND_ORDER">
+            DELETE FROM REFUND_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:REFUND_ORDER">
+            SELECT * FROM REFUND_ORDER
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+
+    <operation name="queryRefundAmount" multiplicity="one" resulttype="java.lang.Long" remark="查询订单已退款金额:REFUND_ORDER">
+        SELECT sum(amount) FROM REFUND_ORDER
+        WHERE
+        STATUS!=3
+        AND
+        bill_order_out_code = #{outCode,jdbcType=VARCHAR}
+    </operation>
+
+
+    <operation name="queryByCode" multiplicity="one"  remark="根据退款单号查询退款单:REFUND_ORDER">
+        SELECT * FROM REFUND_ORDER
+        WHERE
+        CODE = #{code,jdbcType=VARCHAR}
+    </operation>
+
+
+    <operation name="queryRecentlyRefundOrders" multiplicity="many"  remark="查询一小时之内的退款申请:REFUND_ORDER">
+        SELECT * FROM REFUND_ORDER
+        WHERE
+        STATUS=1
+        AND
+        SUBMIT_TIME > #{time,jdbcType=VARCHAR}
+    </operation>
+
+
+    <operation name="updateRefundStatusByRefundCode" paramtype="object" remark="更新退款单状态:REFUND_ORDER">
+        UPDATE REFUND_ORDER
+        SET
+        STATUS          = #{status,jdbcType=INTEGER}
+        <if test="status == 2">
+            ,SUCCESS_TIME    = now()
+        </if>
+        WHERE
+        CODE            = #{code,jdbcType=VARCHAR}
+    </operation>
+
+
+    <operation name="getPagingByCondition" multiplicity="paging" paging="RefundOrder" paramtype="primitive" remark="分页查询退款订单记录:REFUND_ORDER">
+        SELECT * FROM REFUND_ORDER
+        WHERE
+        submit_time
+        between #{beginTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+        <if test="status != null">
+            AND STATUS   = #{status,jdbcType=INTEGER}
+        </if>
+        <if test="code != null">
+            AND CODE   = #{code,jdbcType=VARCHAR}
+        </if>
+        <if test="billOrderOutCode != null">
+            AND BILL_ORDER_OUT_CODE   = #{billOrderOutCode,jdbcType=VARCHAR}
+        </if>
+        ORDER BY SUBMIT_TIME DESC
+    </operation>
+
+</table>

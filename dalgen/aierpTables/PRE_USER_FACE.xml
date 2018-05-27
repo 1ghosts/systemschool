@@ -1,0 +1,56 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="PRE_USER_FACE" physicalName="PRE_USER_FACE" remark="PRE_USER_FACE">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:PRE_USER_FACE">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO PRE_USER_FACE(
+            
+            FACE_ID
+            ,USER_ID
+            ,FACE_IMG_URL
+            ,GMT_CREATED
+            ,GMT_UPDATED
+        )VALUES(
+            
+            #{faceId,jdbcType=VARCHAR}
+            ,#{userId,jdbcType=VARCHAR}
+            ,#{faceImgUrl,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:PRE_USER_FACE">
+            UPDATE PRE_USER_FACE
+            SET
+                    FACE_ID         = #{faceId,jdbcType=VARCHAR}
+                    ,USER_ID         = #{userId,jdbcType=VARCHAR}
+                    ,FACE_IMG_URL    = #{faceImgUrl,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:PRE_USER_FACE">
+            DELETE FROM PRE_USER_FACE
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:PRE_USER_FACE">
+            SELECT * FROM PRE_USER_FACE
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+
+    <operation name="getByFaceId" multiplicity="one" remark="根据faceId查询预会员人脸信息">
+        SELECT * FROM PRE_USER_FACE
+        WHERE
+        FACE_ID            =  #{faceId,jdbcType=VARCHAR}
+    </operation>
+</table>

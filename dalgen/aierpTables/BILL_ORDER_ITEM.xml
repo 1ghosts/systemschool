@@ -1,0 +1,64 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="BILL_ORDER_ITEM" physicalName="BILL_ORDER_ITEM" remark="BILL_ORDER_ITEM">
+    <!--  特殊字符说明  &lt;&gt;   <> -->
+
+    <operation name="insert" paramtype="object" remark="插入表:BILL_ORDER_ITEM">
+            <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+                SELECT
+                LAST_INSERT_ID()
+            </selectKey>
+        INSERT INTO BILL_ORDER_ITEM(
+            
+            NAME
+            ,COUNT
+            ,PRICE
+            ,RFIDS
+            ,IMG_URL
+            ,BAR_CODE
+            ,OUT_CODE
+            ,GMT_CREATED
+            ,GMT_UPDATED
+            ,SPECIFICATION
+        )VALUES(
+            
+            #{name,jdbcType=VARCHAR}
+            ,#{count,jdbcType=INTEGER}
+            ,#{price,jdbcType=BIGINT}
+            ,#{rfids,jdbcType=LONGVARCHAR}
+            ,#{imgUrl,jdbcType=VARCHAR}
+            ,#{barCode,jdbcType=VARCHAR}
+            ,#{outCode,jdbcType=VARCHAR}
+            ,now()
+            ,now()
+            ,#{specification,jdbcType=VARCHAR}
+        )
+    </operation>
+
+        <operation name="update" paramtype="object" remark="更新表:BILL_ORDER_ITEM">
+            UPDATE BILL_ORDER_ITEM
+            SET
+                    NAME            = #{name,jdbcType=VARCHAR}
+                    ,COUNT           = #{count,jdbcType=INTEGER}
+                    ,PRICE           = #{price,jdbcType=BIGINT}
+                    ,RFIDS           = #{rfids,jdbcType=LONGVARCHAR}
+                    ,IMG_URL         = #{imgUrl,jdbcType=VARCHAR}
+                    ,BAR_CODE        = #{barCode,jdbcType=VARCHAR}
+                    ,OUT_CODE        = #{outCode,jdbcType=VARCHAR}
+                    ,GMT_UPDATED     = now()
+                    ,SPECIFICATION   = #{specification,jdbcType=VARCHAR}
+            WHERE
+                ID              = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:BILL_ORDER_ITEM">
+            DELETE FROM BILL_ORDER_ITEM
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+
+        <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:BILL_ORDER_ITEM">
+            SELECT * FROM BILL_ORDER_ITEM
+            WHERE
+                ID = #{id,jdbcType=INTEGER}
+        </operation>
+</table>
